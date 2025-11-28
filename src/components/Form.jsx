@@ -1,76 +1,67 @@
 import React from 'react'
 
-class Form extends React.Component {
-    state = {
-        firstName:'',
-        email:'',
-        message:'',
-        select:'',
-        subscription:false
-    }
-    handleChange = (event) => {
-        this.setState({
-            [event.target.name]: event.target.value
-        })
-    }
+    class Form extends React.Component {
+        state = {
+            email: '',
+            subscription: false,
+            sent: false,
+        }
 
-    handleCheckbox = (event) => {
-        this.setState({
-            [event.target.name]: event.target.checked
-        })
-    }
+        handleChange = (event) => {
+            const {name, value, type, checked} = event.target
+            this.setState({
+                [name]: type === 'checkbox' ? checked : value
+            })
+        }
 
-    componentDidUpdate(prevProps, prevState) {
-        // Логируем только если firstName изменился
-        if (prevState.firstName !== this.state.firstName) {
-            console.log({firstName: this.state.firstName})
+        validateEmail = () => {
+            if (!/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(this.state.email)) {
+                alert('email is not correct')
+                return false
+            }
+            return true
+        }
+
+        handleSubmit = () => {
+            if (this.validateEmail() && this.state.subscription) {
+                this.setState({sent: true})
+                alert("Success!")
+            } else {
+                if (!this.validateEmail()) {
+                    alert('Please fill correct email')
+                } else if (!this.state.subscription) {
+                    alert('Please agree with the terms and conditions')
+                }
+            }
+
+        }
+
+
+        render() {
+            const {email, subscription, sent} = this.state
+            return <div>
+                <input
+                    type="email"
+                    name="email"
+                    placeholder="email"
+                    value={email}
+                    onChange={this.handleChange}
+                />
+                <br/>
+                <label>
+                    <input
+                        type="checkbox"
+                        name="subscription"
+                        checked={subscription}
+                        onChange={this.handleChange}
+                    />
+                    I agree with the terms and conditions
+                </label>
+                <br/>
+                <br/>
+                <button onClick={this.handleSubmit}>{sent ? 'Sent' : 'Send'}</button>
+            </div>
         }
     }
-
-    validateName = () => {
-        if(this.state.firstName.length < 5) {
-            alert('too short')
-        }
-    }
-
-    validateEmail = () => {
-        if(!/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(this.state.email)) {
-            alert('email is not correct')
-        }
-    }
-
-    render () {
-        const{firstName, email,message, select, subscription} = this.state
-        return <div>
-            <input
-                type="text"
-                name="firstName"
-                placeholder="firstName"
-                value={firstName}
-                onChange={this.handleChange}
-                onBlur={this.validateName}
-            />
-            <input
-                type="email"
-                name="email"
-                placeholder="email"
-                value={email}
-                onChange={this.handleChange}
-                onBlur={this.validateEmail}
-            />
-            <br/>
-            <textarea name="message" value={message} onChange={this.handleChange}/>
-            <br/>
-            <select name="select" value={select} onChange={this.handleChange}>
-                <option value="" disabled>1</option>
-                <option value="1">1</option>
-                <option value="2">2</option>
-                <option value="3">3</option>
-            </select>
-            <br/>
-            <input type="checkbox" name="subscription" checked={subscription} onChange={this.handleCheckbox}></input>
-        </div>
-    }
-}
 
 export {Form}
