@@ -1,6 +1,6 @@
 
 import './App.css';
-import {Form} from './components/Form'
+import {Form} from './components/FormWithRef'
 
 function App() {
   return (
