@@ -1,17 +1,28 @@
 import React from 'react'
 
-    class Form extends React.Component {
-        state = {
-            email: '',
-            subscription: false,
-            sent: false,
+    class FormWithRef extends React.Component {
+        constructor() {
+            super(); //Вызывает конструктор React.Component
+            this.state = {
+                card: '',
+                email:'',
+            }
+            this.cardRef = React.createRef() //Ref не храним в state
+            this.emailRef = React.createRef()
         }
 
-        handleChange = (event) => {
-            const {name, value, type, checked} = event.target
-            this.setState({
-                [name]: type === 'checkbox' ? checked : value
-            })
+
+
+        handleChange = (event => {
+            this.setState(() => ({[event.target.name]: event.target.value}),() => {})
+            if (this.state.card.length === 16) {
+                this.emailRef.current.focus()
+            }
+        })
+
+        componentDidMount() {
+            console.log(this.cardRef.current)
+            this.cardRef.current.focus()
         }
 
         validateEmail = () => {
@@ -22,46 +33,34 @@ import React from 'react'
             return true
         }
 
-        handleSubmit = () => {
-            if (this.validateEmail() && this.state.subscription) {
-                this.setState({sent: true})
-                alert("Success!")
-            } else {
-                if (!this.validateEmail()) {
-                    alert('Please fill correct email')
-                } else if (!this.state.subscription) {
-                    alert('Please agree with the terms and conditions')
-                }
-            }
-
-        }
 
 
         render() {
-            const {email, subscription, sent} = this.state
+            const {card, email} = this.state
             return <div>
                 <input
-                    type="email"
-                    name="email"
-                    placeholder="email"
-                    value={email}
+                    type="text"
+                    name="card"
+                    placeholder="card"
+                    value={card}
                     onChange={this.handleChange}
+                    ref = {this.cardRef}
                 />
                 <br/>
                 <label>
                     <input
-                        type="checkbox"
-                        name="subscription"
-                        checked={subscription}
-                        onChange={this.handleChange}
+                        type="email"
+                        name="email"
+                        placeholder="email"
+                        value={email}
+                        //onChange={this.handleChange}
+                        ref = {this.emailRef}
                     />
-                    I agree with the terms and conditions
                 </label>
                 <br/>
                 <br/>
-                <button onClick={this.handleSubmit}>{sent ? 'Sent' : 'Send'}</button>
             </div>
         }
     }
 
-export {Form}
+export {FormWithRef}
